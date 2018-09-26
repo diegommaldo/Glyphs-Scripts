@@ -12,7 +12,7 @@ Vanilla required.
 
 """
 
-# Thanks Filipe Negrão for th UI update.
+# Thanks Filipe Negrão for the UI update.
 
 from vanilla import *
 from os.path import expanduser
