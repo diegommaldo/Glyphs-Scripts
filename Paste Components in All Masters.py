@@ -1,5 +1,6 @@
 #MenuTitle: Paste Components in All Masters
 # -*- coding: utf-8 -*-
+# this script was generated with Chat GPT - https://openai.com/blog/chatgpt
 __doc__="""
 This script pastes components in all masters.
 """
