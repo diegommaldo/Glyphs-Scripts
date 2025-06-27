@@ -21,8 +21,6 @@ for thisLayer in thisFont.selectedLayers:
 
 print("All corner components decomposed.")
 
-FlatGlyphs()
-
 def tidy_paths():
     try:
         font = Glyphs.font
