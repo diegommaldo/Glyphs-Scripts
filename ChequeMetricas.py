@@ -1,4 +1,4 @@
-# MenuTitle: Cheque as Métricas
+# MenuTitle: Cheque a Métrica
 # -*- coding: utf-8 -*-
 from __future__ import print_function, division, unicode_literals
 import vanilla
@@ -6,7 +6,7 @@ import vanilla
 class MetricChecker(object):
 	def __init__(self):
 		# Janela mais enxuta e organizada
-		self.w = vanilla.FloatingWindow((380, 520), "Cheque as métricas")
+		self.w = vanilla.FloatingWindow((380, 520), "Cheque a Métrica")
 		
 		padding = 15
 		y = 15
@@ -37,7 +37,7 @@ class MetricChecker(object):
 		self.w.checkSC = vanilla.CheckBox((padding, y, -padding, 20), "Small Caps", value=False, sizeStyle='small')
 		
 		y += 35
-		self.w.runButton = vanilla.Button((padding, y, -padding, 30), "Cheque!!", callback=self.process_script)
+		self.w.runButton = vanilla.Button((padding, y, -padding, 30), "Analise!", callback=self.process_script)
 		
 		y += 45
 		self.w.line2 = vanilla.HorizontalLine((padding, y, -padding, 1))
