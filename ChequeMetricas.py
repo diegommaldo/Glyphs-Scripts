@@ -1,4 +1,4 @@
-# MenuTitle: Cheque as Métricas (G3 Final Corrigido)
+# MenuTitle: Cheque as Métricas
 # -*- coding: utf-8 -*-
 from __future__ import print_function, division, unicode_literals
 import vanilla
