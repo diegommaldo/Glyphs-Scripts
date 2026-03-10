@@ -1,6 +1,9 @@
 # MenuTitle: Verificar e Abrir Métricas com Decimais
 # -*- coding: utf-8 -*-
 from __future__ import division, print_function, unicode_literals
+__doc__ = """
+Abre Janela com glifos que tenham métricas em decimais. Útil para ao gerar master através de instância para acertar os valores corretamente.
+"""
 
 thisFont = Font
 # Limpa a seleção anterior para focar nos resultados
