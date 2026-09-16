@@ -14,9 +14,11 @@
 
 ## Color Fonts
 - Export SBIX Color Fonts
+
 ## Components
 - Decompose All Corner Components and Overlap Shapes
 - Paste Components in All Masters
+
 ## Kern On
 - Force Kern On Autopairs (for ignored pairs, optimized for Vietnamese)
 <p>
@@ -36,8 +38,10 @@
   <img width="626" height="730" alt="Screenshot 2026-09-16 at 18 02 53" src="https://github.com/user-attachments/assets/e868f57a-ae8b-4b9d-8999-81f9288209c5" />
 <img width="626" height="730" alt="Screenshot 2026-09-16 at 18 02 57" src="https://github.com/user-attachments/assets/e637edc0-62e2-4e49-90cf-dab03829027c" />
   </p>
+
 ## OpenType Features
 - Stylistic Set Generator
+
 ## Production
 • Editor de Axis Location (Axis Location Checker)
 <p>
