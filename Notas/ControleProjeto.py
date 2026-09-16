@@ -7,41 +7,30 @@ desenvolvimento de projeto.
 
 import datetime
 import vanilla
-from AppKit import NSPasteboard, NSStringPboardType, NSAlert
+from AppKit import NSPasteboard, NSStringPboardType, NSAlert, NSImage, NSSize, NSBezierPath, NSColor, NSRect, NSImageCell
 
 class ReviewNotesFloatingWindow(object):
     def __init__(self):
-        # Limpa o console de macro do Glyphs no início da execução
         Glyphs.clearLog()
 
-        # Flag para prevenir o loop infinito de recursão em observadores
         self._updating_obs = True
 
-        # Ciclo dos círculos de status
         self.status_cycles = {
             "🔴": "🟡",
             "🟡": "🟢",
             "🟢": "🔴"
         }
 
-        # Masters disponíveis (incluindo 'Todas' no lugar de 'Geral')
         self.masters_list = self.get_master_names()
-
-        # Lista de filtros de status
         self.status_filters = ["Todos Status", "🔴 Pendentes", "🟡 Em Processo", "🟢 Concluídos"]
-
-        # Configuração dos eixos disponíveis na fonte
         self.axes_filters = self.get_available_axes_filters()
 
-        # Janela Flutuante com altura ajustada para a nova linha do revisor
-        self.w = vanilla.FloatingWindow((580, 660), "Controle de Projeto", minSize=(480, 470))
+        self.w = vanilla.FloatingWindow((610, 660), "Controle de Projeto", minSize=(500, 470))
 
-        # --- CABEÇALHO: Nome do arquivo ativo na fonte ---
         file_name = self.get_current_file_name()
         self.w.fileHeaderLabel = vanilla.TextBox((12, 12, -12, 18), f"Arquivo: {file_name}", sizeStyle="small")
         self.w.fileHeaderLabel.getNSTextField().setTextColor_(self.get_secondary_color())
 
-        # --- ABAS: Glifos / Tarefas Gerais ---
         self.w.tabs = vanilla.Tabs((12, 34, -12, -72), ["Glifos", "Tarefas"], callback=self.on_tab_changed)
         glyphsTab = self.w.tabs[0]
         tasksTab = self.w.tabs[1]
@@ -74,14 +63,22 @@ class ReviewNotesFloatingWindow(object):
             {"title": "", "key": "status", "width": 28, "minWidth": 24, "maxWidth": 40},
             {"title": "Master", "key": "master", "width": 110, "minWidth": 110, "maxWidth": 250, "editable": True, "editCellData": {"type": "popUpButton", "items": table_masters}},
             {"title": "Glifo", "key": "glyph", "width": 85, "minWidth": 70, "maxWidth": 200},
-            {"title": "Observações", "key": "obs", "width": 270, "minWidth": 100, "maxWidth": 1000, "editable": True}
+            {"title": "Cor", "key": "colorIcon", "width": 32, "minWidth": 32, "maxWidth": 40},
+            {"title": "Observações", "key": "obs", "width": 250, "minWidth": 100, "maxWidth": 1000, "editable": True}
         ]
         glyphsTab.list = vanilla.List((0, 146, -0, -0), [],
                                      columnDescriptions=columnDescriptions,
                                      doubleClickCallback=self.on_double_click_row,
                                      editCallback=self.on_edit_obs_direct,
                                      allowsMultipleSelection=True)
-        glyphsTab.list.getNSTableView().setRowHeight_(22)
+        
+        # Configura a coluna de Cor para desenhar imagens
+        table_view = glyphsTab.list.getNSTableView()
+        table_view.setRowHeight_(22)
+        color_column = table_view.tableColumnWithIdentifier_("colorIcon")
+        if color_column:
+            image_cell = NSImageCell.alloc().init()
+            color_column.setDataCell_(image_cell)
 
         self.topMasterSelect = glyphsTab.topMasterSelect
         self.allMastersCheck = glyphsTab.allMastersCheck
@@ -144,7 +141,6 @@ class ReviewNotesFloatingWindow(object):
         self.w.open()
 
     def get_secondary_color(self):
-        from AppKit import NSColor
         return NSColor.secondaryLabelColor()
 
     def get_current_file_name(self):
@@ -152,6 +148,96 @@ class ReviewNotesFloatingWindow(object):
         if not font or not font.filepath:
             return "Sem arquivo salvo"
         return font.filepath.split("/")[-1]
+
+    def get_color_image(self, glyph_color, layer_color):
+        size = NSSize(14, 14)
+        image = NSImage.alloc().initWithSize_(size)
+        image.lockFocus()
+
+        palette = [
+            NSColor.colorWithCalibratedRed_green_blue_alpha_(0.94, 0.33, 0.31, 1.0), # 0: Red
+            NSColor.colorWithCalibratedRed_green_blue_alpha_(0.98, 0.60, 0.20, 1.0), # 1: Orange
+            NSColor.colorWithCalibratedRed_green_blue_alpha_(0.71, 0.49, 0.30, 1.0), # 2: Brown
+            NSColor.colorWithCalibratedRed_green_blue_alpha_(0.98, 0.85, 0.27, 1.0), # 3: Yellow
+            NSColor.colorWithCalibratedRed_green_blue_alpha_(0.61, 0.83, 0.35, 1.0), # 4: Light Green
+            NSColor.colorWithCalibratedRed_green_blue_alpha_(0.20, 0.70, 0.30, 1.0), # 5: Green
+            NSColor.colorWithCalibratedRed_green_blue_alpha_(0.40, 0.78, 0.95, 1.0), # 6: Light Blue
+            NSColor.colorWithCalibratedRed_green_blue_alpha_(0.20, 0.50, 0.85, 1.0), # 7: Blue
+            NSColor.colorWithCalibratedRed_green_blue_alpha_(0.60, 0.40, 0.80, 1.0), # 8: Purple
+            NSColor.colorWithCalibratedRed_green_blue_alpha_(0.90, 0.40, 0.70, 1.0), # 9: Magenta
+            NSColor.colorWithCalibratedRed_green_blue_alpha_(0.75, 0.75, 0.75, 1.0), # 10: Light Gray
+            NSColor.colorWithCalibratedRed_green_blue_alpha_(0.35, 0.35, 0.35, 1.0), # 11: Dark Gray
+        ]
+
+        def get_nscolor(val):
+            if val is None or val == -1:
+                return None
+            if hasattr(val, "CGColor"):
+                return val
+            if isinstance(val, int) and 0 <= val < len(palette):
+                return palette[val]
+            return None
+
+        g_col = get_nscolor(glyph_color)
+        l_col = get_nscolor(layer_color)
+
+        rect = NSRect((1, 1), (12, 12))
+        path = NSBezierPath.bezierPathWithRoundedRect_xRadius_yRadius_(rect, 2.0, 2.0)
+
+        if g_col is None and l_col is None:
+            NSColor.separatorColor().set()
+            path.setLineWidth_(1.0)
+            path.stroke()
+        elif l_col is None:
+            g_col.set()
+            path.fill()
+        elif g_col is None:
+            l_col.set()
+            path.fill()
+        else:
+            path.addClip()
+            g_col.set()
+            NSBezierPath.fillRect_(rect)
+
+            tri = NSBezierPath.alloc().init()
+            tri.moveToPoint_((1, 1))
+            tri.lineToPoint_((13, 1))
+            tri.lineToPoint_((13, 13))
+            tri.closePath()
+            l_col.set()
+            tri.fill()
+
+        image.unlockFocus()
+        return image
+
+    def get_item_color_icon(self, item):
+        font = Glyphs.font
+        if not font:
+            return self.get_color_image(-1, -1)
+        glyph_name = item.get("glyph")
+        master_name = item.get("master")
+        glyph = font.glyphs[glyph_name]
+        if not glyph:
+            return self.get_color_image(-1, -1)
+
+        g_color = glyph.color if hasattr(glyph, "color") else -1
+
+        target_master = None
+        if master_name and master_name != "Geral":
+            for m in font.masters:
+                if m.name == master_name:
+                    target_master = m
+                    break
+        if not target_master and font.masters:
+            target_master = font.selectedFontMaster
+
+        l_color = -1
+        if target_master:
+            layer = glyph.layers[target_master.id]
+            if layer and hasattr(layer, "color"):
+                l_color = layer.color
+
+        return self.get_color_image(g_color, l_color)
 
     def show_help(self, sender):
         alert = NSAlert.alloc().init()
@@ -184,12 +270,12 @@ class ReviewNotesFloatingWindow(object):
 
     def on_tab_changed(self, sender):
         active_tab = sender.get()
-        if active_tab == 0:  # Aba Glifos
+        if active_tab == 0:
             self.w.openPendingsBtn.show(True)
             self.w.copyMDBtn.show(True)
             self.w.clearGlyphsBtn.show(True)
             self.w.clearTasksBtn.show(False)
-        else:  # Aba Tarefas
+        else:
             self.w.openPendingsBtn.show(False)
             self.w.copyMDBtn.show(True)
             self.w.clearGlyphsBtn.show(False)
@@ -247,13 +333,24 @@ class ReviewNotesFloatingWindow(object):
         font = Glyphs.font
         if not font:
             return []
-        return [dict(item) for item in font.userData.get("reviewNotes_list", [])]
+        items = []
+        for item in font.userData.get("reviewNotes_list", []):
+            d = dict(item)
+            d["colorIcon"] = self.get_item_color_icon(d)
+            items.append(d)
+        return items
 
     def write_notes_to_ud(self, notes):
         font = Glyphs.font
         if not font:
             return
-        font.userData["reviewNotes_list"] = [dict(n) for n in notes]
+        clean_notes = []
+        for n in notes:
+            copy_n = dict(n)
+            if "colorIcon" in copy_n:
+                del copy_n["colorIcon"]
+            clean_notes.append(copy_n)
+        font.userData["reviewNotes_list"] = clean_notes
 
     def save_reviewer(self, sender):
         font = Glyphs.font
