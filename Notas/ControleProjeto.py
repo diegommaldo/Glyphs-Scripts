@@ -7,7 +7,8 @@ desenvolvimento de projeto.
 
 import datetime
 import vanilla
-from AppKit import NSPasteboard, NSStringPboardType, NSAlert, NSImage, NSSize, NSBezierPath, NSColor, NSRect, NSImageCell
+from AppKit import NSPasteboard, NSStringPboardType, NSAlert, NSImage, NSSize, NSBezierPath, NSColor, NSRect, NSImageCell, NSNotificationCenter
+from GlyphsApp import UPDATEINTERFACE
 
 class ReviewNotesFloatingWindow(object):
     def __init__(self):
@@ -72,7 +73,6 @@ class ReviewNotesFloatingWindow(object):
                                      editCallback=self.on_edit_obs_direct,
                                      allowsMultipleSelection=True)
         
-        # Configura a coluna de Cor para desenhar imagens
         table_view = glyphsTab.list.getNSTableView()
         table_view.setRowHeight_(22)
         color_column = table_view.tableColumnWithIdentifier_("colorIcon")
@@ -121,7 +121,7 @@ class ReviewNotesFloatingWindow(object):
         self.taskStatusFilterSelect = tasksTab.statusFilterSelect
         self.taskCounterText = tasksTab.counterText
 
-        # --- RODAPÉ GLOBAL E ORGANIZADO ---
+        # --- RODAPÉ GLOBAL ---
         self.w.line2 = vanilla.HorizontalLine((12, -66, -12, 1))
         
         self.w.revLabel = vanilla.TextBox((12, -59, 110, 17), "Última revisão por:", sizeStyle="small")
@@ -135,10 +135,35 @@ class ReviewNotesFloatingWindow(object):
         self.w.clearTasksBtn = vanilla.Button((-105, -30, -12, 22), "Limpar Tarefas", callback=self.clear_all_tasks, sizeStyle="small")
         self.w.clearTasksBtn.show(False)
 
+        # Registra observadores de notificação do macOS
+        nc = NSNotificationCenter.defaultCenter()
+        nc.addObserver_selector_name_object_(self, "update_colors_event:", "GSUpdateInterface", None)
+        nc.addObserver_selector_name_object_(self, "update_colors_event:", "GSDocumentDidChangeNotification", None)
+        nc.addObserver_selector_name_object_(self, "update_colors_event:", "GSCallbackHandledNotification", None)
+
+        # Callback nativo do Glyphs
+        Glyphs.addCallback(self.update_colors_event_, UPDATEINTERFACE)
+
+        self.w.bind("close", self.window_will_close)
+
         self.load_saved_data()
         self._updating_obs = False
 
         self.w.open()
+
+    def update_colors_event_(self, sender=None):
+        if not self._updating_obs:
+            self.refresh_table_view()
+
+    def window_will_close(self, sender):
+        nc = NSNotificationCenter.defaultCenter()
+        nc.removeObserver_name_object_(self, "GSUpdateInterface", None)
+        nc.removeObserver_name_object_(self, "GSDocumentDidChangeNotification", None)
+        nc.removeObserver_name_object_(self, "GSCallbackHandledNotification", None)
+        try:
+            Glyphs.removeCallback(self.update_colors_event_, UPDATEINTERFACE)
+        except:
+            pass
 
     def get_secondary_color(self):
         return NSColor.secondaryLabelColor()
