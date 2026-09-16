@@ -29,6 +29,13 @@
 - Checar Métricas
 - Samba de Arredondar Métricas
 - Verificar Largura para Fontes Monoespaçadas
+
+## Notas
+- Controle de Projeto
+  <p>
+  <img width="626" height="730" alt="Screenshot 2026-09-16 at 18 02 53" src="https://github.com/user-attachments/assets/e868f57a-ae8b-4b9d-8999-81f9288209c5" />
+<img width="626" height="730" alt="Screenshot 2026-09-16 at 18 02 57" src="https://github.com/user-attachments/assets/e637edc0-62e2-4e49-90cf-dab03829027c" />
+  </p>
 ## OpenType Features
 - Stylistic Set Generator
 ## Production
