@@ -33,11 +33,11 @@
 - Verificar Largura para Fontes Monoespaçadas
 
 ## Notas
-- Controle de Projeto
+- Controle de Projeto 1.1
   <p>
-<img width="656" height="730" alt="Screenshot 2026-09-16 at 18 28 06" src="https://github.com/user-attachments/assets/869c479e-a012-48fa-8509-60d84f2fbf39" />
-<img width="656" height="730" alt="Screenshot 2026-09-16 at 18 28 10" src="https://github.com/user-attachments/assets/d5e8507a-3e86-4ac6-9fa7-5eb9c27911ba" />
-
+<img width="806" height="750" alt="Screenshot 2026-09-17 at 16 08 40" src="https://github.com/user-attachments/assets/0787486e-9ead-4774-a847-358fe2b5ac75" />
+<img width="806" height="750" alt="Screenshot 2026-09-17 at 16 08 47" src="https://github.com/user-attachments/assets/a0a4c733-60ff-46ac-93a3-7a4614a28230" />
+<img width="806" height="750" alt="Screenshot 2026-09-17 at 16 09 14" src="https://github.com/user-attachments/assets/20fd9b80-1be8-4581-905c-209dcae4b426" />
   </p>
 
 ## OpenType Features
