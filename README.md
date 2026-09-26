@@ -59,10 +59,12 @@
 <img width="546" height="665" alt="Screenshot 2026-07-15 at 17 35 46" src="https://github.com/user-attachments/assets/7e8e72c2-c9fb-4fee-a672-ec62139f32c6" />
 </p>
 <p>
-• Gerador de Acentuados
+• Latin Diacritics Generator Pro
 </p>
 <p>
-  <img width="416" height="705" alt="Screenshot 2026-07-06 at 20 44 02" src="https://github.com/user-attachments/assets/1aedee84-395e-49be-88d2-2ef812bc66d4" />
+<img width="466" height="830" alt="Screenshot 2026-09-26 at 17 26 00" src="https://github.com/user-attachments/assets/95ec8972-9120-45d5-859a-c3550e096319" />
+<img width="466" height="830" alt="Screenshot 2026-09-26 at 17 26 04" src="https://github.com/user-attachments/assets/558835f5-7d1b-45fc-8b5d-470b62b255c3" />
+
 
 </p>
 • Remove Layer Color
